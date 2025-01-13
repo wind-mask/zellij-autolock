@@ -6,9 +6,17 @@ All notable changes to this project will be documented in this file.
 
 **Full Changelog**: https://github.com/fresh2dev/zellij-autolock/compare/0.2.1...0.2.2
 
+### :clap: Features
+
+- Improve logging
+
 ### :fist: Fixes
 
 - Handle absolute paths
+
+### :metal: Other
+
+- bump zellij-tile to 0.41.2
 
 ## 0.2.1 - 2024-11-24
 
