@@ -149,17 +149,17 @@ impl ZellijPlugin for State {
                         } else {
                             self.latest_mode
                         };
-
+                        if running_command != self.latest_running_command {
+                            self.latest_running_command = running_command;
+                            self.start_timer();
+                        } else {
+                            return false; // No need to render UI.
+                        }
                         if self.latest_mode != target_input_mode
                             && (self.latest_mode == InputMode::Locked
                                 || self.latest_mode == InputMode::Normal)
                         {
                             switch_to_input_mode(&target_input_mode);
-                        }
-
-                        if running_command != self.latest_running_command {
-                            self.latest_running_command = running_command;
-                            self.start_timer();
                         }
                     }
                 }
