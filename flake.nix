@@ -20,7 +20,8 @@
 
         pkgs = import nixpkgs {
           inherit system;
-          overlays = [ rust-overlay.overlays.default ];
+          overlays = [ rust-overlay.overlays.default 
+          ];
         };
 
         rustToolchain = pkgs.rust-bin.stable.latest.default.override {
@@ -36,20 +37,25 @@
         packages.default = rustPlatform.buildRustPackage {
           name = packageName;
           src = ./.;
-
+          depsBuildBuild = [ pkgs.openssl pkgs.pkg-config ];
+          buildInputs = [ pkgs.openssl pkgs.pkg-config ];
           cargoLock.lockFile = ./Cargo.lock;
-
+          CARGO_BUILD_TARGET = buildTarget;
           buildPhase = ''
+            runHook preBuild
             cargo build --release -p ${packageName} --target=${buildTarget}
+            runHook postBuild
           '';
 
           installPhase = ''
+            runHook preInstall
             mkdir -p $out/lib
             cp target/${buildTarget}/release/*.wasm $out/lib/
+            runHook postInstall
           '';
 
           # Disable checks if they only work for WASM
-          # doCheck = false;
+          doCheck = false;
         };
       }
     );

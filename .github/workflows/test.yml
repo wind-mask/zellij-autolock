@@ -1,0 +1,33 @@
+name: "Test Nix"
+on:
+  push:
+    branches:
+      - nix-crash
+  workflow_dispatch:
+jobs:
+  test-nix:
+    name: "Test Nix"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Install Nix
+        uses: nixbuild/nix-quick-install-action@v34
+        with:
+          nix_conf: |
+            keep-env-derivations = true
+            keep-outputs = true
+      - name: Set up Nix cache
+        uses: nix-community/cache-nix-action@v6
+        with:
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('**/flake.lock') }}
+          restore-prefixes-first-match: nix-${{ runner.os }}-
+          purge: true
+      - name: Test Nix build
+        run: nix build
+      - name: Upload Nix build artifacts
+        uses: actions/upload-artifact@v5
+        with:
+          name: nix-build-artifacts
+          path: ./result
+          if-no-files-found: error
